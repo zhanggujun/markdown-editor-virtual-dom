@@ -1,0 +1,28 @@
+$defaultHeight: 400px;
+$defaultColor: #fff;
+
+@mixin flex{
+  display:flex;
+}
+
+@mixin center-y{
+  @include flex;
+  align-items:center;
+}
+
+@mixin center-x{
+  @include flex;
+  justify-content:center;
+}
+
+@mixin center{
+  @include center-x;
+  @include center-y;
+}
+
+@mixin headHover{
+  background-color:#ebebeb;
+  box-shadow:inset 0 0 3px rgba(0,0,0,.1);
+  color:#999;
+  transition: all .3s;
+}

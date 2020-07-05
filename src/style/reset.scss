@@ -1,0 +1,14 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+.md-clear:after,
+.md-clear:before{
+  display:block;
+  content:"";
+  height:0;
+  visibility:hidden;
+  clear:both;
+}
