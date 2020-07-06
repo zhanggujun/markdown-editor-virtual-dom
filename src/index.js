@@ -9,23 +9,10 @@ import debounce from 'lodash/debounce'
 
 import marked from './util/marked'
 
-import { init } from './vnode/init'
-import { classModule } from './vnode/modules/class'
-import { propsModule } from './vnode/modules/props'
-import { styleModule } from './vnode/modules/style'
-import { attributesModule } from './vnode/modules/attributes'
-import { eventListenersModule } from './vnode/modules/eventlisteners'
-import { h } from './vnode/h'
+import { ToolLeft,ToolRight } from './util/tool'
 
-import { ToolLeft,ToolRight } from './util/tool';
-
-const patch = init([
-  classModule,
-  propsModule,
-  styleModule,
-  attributesModule,
-  eventListenersModule
-])
+import VNode from './util/vnode'
+import Range from './util/range'
 
 const error = msg => console.error(msg)
 
@@ -33,7 +20,8 @@ const tool = ['undo','redo', 'bold', 'italic', 'underline', 'strikethrough', 'h1
 
 const defaultOptions = {
   value: '',
-  placeholder: '请输入内容',
+  placeholder: '请输入内容...',
+  empty: '预览区域',
   height: '500px',
   keyboard: true,
   full:false,
@@ -63,14 +51,18 @@ class Editor{
       return error('editor init el is not HTMLElement')
     let toolbar = (isArray(options.toolbar) && options.toolbar.length) ? [ ...options.toolbar ] : [ ...tool ]
     const _options = {
-      _toolbar:getToolBar(toolbar),...options,
+      _toolbar:getToolBar(toolbar),
+      ...options,
       preview: ((options.split && options.preview) ? false : options.preview) || false,
-      text: options.value ? options.value : ''
     }
+    this.mark = (`md-${new Date().getTime()}-${Math.random()}`).replace('.','')
     this.options = { ...defaultOptions,..._options }
+    this.VNode = new VNode(this)
     this.proxyData()
-    this.initHtml()
+    this.initVNode()
     this.pluginsCall()
+    // range
+    this.Range = new Range(this)
   }
   static install(name,descriptor){
     if (!Editor.plugins) {
@@ -102,10 +94,21 @@ class Editor{
         },
         set(val){
           value = val
-          self.render()
+          self.VNode.render()
         }
       })
     }
+  }
+  pluginsMarked(){
+    const { value = '' } = this.options || {}
+    let descriptor = Editor.plugins['marked']
+    return isFunction(descriptor) ? descriptor.call(this,this,value) : marked(value).html
+  }
+  insertBefore(text){
+    this.Range.insertBefore(text)
+  }
+  insertAfter(text){
+
   }
   onLockInput(bool){
     this.lock = bool
@@ -122,30 +125,11 @@ class Editor{
     if(isFunction(item.handler)){
       item.handler(item)
     }else{
-      console.log(item)
-    }
-  }
-  _createBox(){
-    const { split,full,preview } = this.options || {}
-    let sel = 'div.md-box'
-    if(split)
-      sel += ' md-split'
-    if(full)
-      sel += ' md-full'
-    if(preview)
-      sel += ' md-preview'
-    return sel
-  }
-  createBox(){
-    const sel = this._createBox()
-    return h(sel,{
-      style: {
-        height: this.options.height || '500px'
+      item.handler = () => {
+        this.Range.insertBefore(item.code,item.range)
       }
-    },[
-      this.createHead(),
-      this.createBody()
-    ])
+      item.handler()
+    }
   }
   handlerControl(item){
     // if(item.name === 'splitscreen'){
@@ -170,118 +154,8 @@ class Editor{
     //   this.options.full = !this.options.full
     // }
   }
-  createToolLeft(){
-    const { _toolbar = [],keyboard = true } = this.options || {}
-    const toolLeft = _toolbar.map(item => {
-      const title = keyboard ? `${item.title} ${item.key}` : `${item.title}`
-      return h(`i.md-icon.iconfont.${item.icon}`,{
-        attrs:{
-          'data-name':item.name,
-          title
-        },
-        on:{
-          click:() => this.handlerToolbar(item)
-        }
-      })
-    })
-    return h('div.md-tool.md-tool-l',[
-      ...toolLeft
-    ])
-  }
-  createControl(sel,item){
-    return h(sel,{
-      attrs: {
-        'data-name':item.name,
-        'title': `${item.title} ${item.key}`
-      },
-      on:{
-        click:() => this.handlerControl(item)
-      }
-    })
-  }
-  createSplit(){
-    const { control = [],split = true } = this.options || {}
-    const item = control[0]
-    let sel = `i.md-icon.iconfont.${item.icon}`
-    if(split)
-      sel += ' .md-active'
-    return this.createControl(sel,item)
-  }
-  createPreview(){
-    const { control = [],preview = false } = this.options || {}
-    const item = control[1]
-    let sel = `i.md-icon.iconfont.${item.icon}`
-    if(preview)
-      sel += ' .md-active'
-    return this.createControl(sel,item)
-  }
-  createFull(){
-    const { control = [],full = false } = this.options || {}
-    const item = control[2]
-    let sel = `i.md-icon.iconfont.${item.icon}`
-    if(full)
-      sel += ' .md-active'
-    return this.createControl(sel,item)
-  }
-  createToolRight(){
-    return h('div.md-tool.md-tool-r',[
-      this.createSplit(),
-      this.createPreview(),
-      this.createFull()
-    ])
-  }
-  createHead(){
-    return h('div.md-head',{},[
-      this.createToolLeft(),
-      this.createToolRight()
-    ])
-  }
-  createBody(){
-    return h('div.md-body',[
-      this.createEdit(),
-      this.createText()
-    ])
-  }
-  createEdit(){
-    const { value = '',placeholder = '' } = this.options || {}
-    return h('div.md-edit',{},[
-      h('textarea.md-textarea.md-scroll',{
-        props:{
-          placeholder
-        },
-        on:{
-          input:(event) => this.onTextChange(event),
-          compositionstart:() => this.onLockInput(true),
-          compositionend:() => this.onLockInput(false)
-        },
-      },value)
-    ])
-  }
-  _marked(){
-    const { value = '' } = this.options || {}
-    let descriptor = Editor.plugins['marked']
-    return isFunction(descriptor) ? descriptor.call(this,this,value) : marked(value).html
-  }
-  createText(){
-    return h('div.md-text.md-scroll',[
-      h('div.md-main',{
-        props:{
-          innerHTML: this._marked()
-        }
-      })
-    ])
-  }
-  render(){
-    const vnode = this.createBox()
-    if(this.vnode){
-      patch(this.vnode,vnode)
-    }else{
-      patch(this.el,vnode)
-    }
-    this.vnode = vnode
-  }
-  initHtml(){
-    this.render()
+  initVNode(){
+    this.VNode.render()
   }
   addTool(item){
     this.options._toolbar = [ ...this.options._toolbar,item ]

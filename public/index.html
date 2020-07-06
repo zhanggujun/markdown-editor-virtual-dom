@@ -16,15 +16,17 @@
 <body>
   <div class="app">
     <div id="app"></div>
+    <div style="padding:10px 0;"></div>
+    <div id="app2"></div>
   </div>
   <script>
 
     const plugin1 = editor => {
-      editor.options.value = '`hello`'
+
     }
 
     const plugin2 = editor => {
-      console.log('plugin2',editor)
+      console.log('plugins2')
     }
 
     // 自定义渲染
@@ -37,9 +39,7 @@
     MdEditor.install('plugin2',plugin2)
 
     const editor = new MdEditor('#app',{
-      toolbar:[],
-      placeholder: 'hello word',
-      value: 'he'
+      value: ''
     })
 
     editor.getTool('undo').handler = () => alert(1)
@@ -52,6 +52,11 @@
       handler:() => alert(2)
     }
     editor.addTool(item)
+
+    new MdEditor('#app2',{
+      placeholder: '发大哥'
+    })
+
   </script>
 </body>
 </html>
