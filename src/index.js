@@ -7,6 +7,25 @@ import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 import debounce from 'lodash/debounce'
 
+import codemirror from 'codemirror'
+
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/clike/clike'
+import 'codemirror/mode/go/go'
+import 'codemirror/mode/htmlmixed/htmlmixed'
+import 'codemirror/mode/http/http'
+import 'codemirror/mode/php/php'
+import 'codemirror/mode/python/python'
+import 'codemirror/mode/http/http'
+import 'codemirror/mode/sql/sql'
+import 'codemirror/mode/vue/vue'
+import 'codemirror/mode/xml/xml'
+
+import 'codemirror/theme/monokai.css'
+import 'codemirror/lib/codemirror.css'
+
+import 'codemirror/addon/selection/active-line'
+
 import marked from './util/marked'
 
 import { ToolLeft,ToolRight } from './util/tool'
@@ -60,6 +79,7 @@ class Editor{
     this.VNode = new VNode(this)
     this.proxyData()
     this.initVNode()
+    this.initCodeMirror()
     this.pluginsCall()
     // range
     this.Range = new Range(this)
@@ -69,6 +89,33 @@ class Editor{
       Editor.plugins = {}
     }
     Editor.plugins[name] = descriptor
+  }
+  initCodeMirror(){
+    console.log(this.mark)
+    const oText = document.querySelector(`#${this.mark}`).querySelector('.md-textarea')
+    this.editor = codemirror.fromTextArea(oText,{
+      lineNumbers: true,
+      mode: 'javascript',
+      readOnly: false,
+      Autofocus: true,
+      styleActiveLine: true,
+      value: 'he'
+    })
+    this.editor.setSize('100%','100%')
+    this.editor.on('change',() => {
+      this.options.value = this.editor.getValue()
+    })
+    this.editor.on('keypress',() => {
+      console.log('keypress')
+    })
+    this.editor.setValue("Hello Kitty\nHello Tony\nHow are you\nFine thank you and you \nI love you")
+
+    this.editor.setOption("lineNumbers","true")
+    // this.CodeMirrorEditor.addOverlay("coconut");
+    // this.CodeMirrorEditor.markText({line:0,ch:0},{line:0,ch:0})
+    this.editor.setBookmark({line:0,ch:0},{line:0,ch:1},{readOnly:true});
+    this.editor.setCursor(0)
+    console.log(this.editor)
   }
   pluginsCall(){
     if(Editor.plugins){
