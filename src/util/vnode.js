@@ -8,9 +8,6 @@ import { attributesModule } from '../vnode/modules/attributes'
 import { eventListenersModule } from '../vnode/modules/eventlisteners'
 import { h } from '../vnode/h'
 
-import marked from './marked'
-import Editor from '../index'
-
 const patch = init([
   classModule,
   propsModule,

@@ -24,11 +24,15 @@ const plugins = [
 
 module.exports = {
   mode: dev,
-  entry: './src/index.js',
+  entry: {
+    'MdEditor': './src/index.js',
+    'MdCrate': './src/packages/editor.js',
+    'MdMarked': './src/packages/marked.js'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'editor.min.js',
-    library: 'MdEditor',
+    filename: '[name].js',
+    library:'[name]',
     libraryTarget: 'umd',
     umdNamedDefine: true,
     libraryExport: 'default',
