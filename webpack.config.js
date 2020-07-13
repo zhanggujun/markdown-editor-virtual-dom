@@ -15,24 +15,22 @@ const devServerPlugin = [
   new webpack.HotModuleReplacementPlugin()
 ]
 
-const plugins = [
-  new MiniCssExtractPlugin({
-    filename: 'editor.min.css',
-  }),
-  new OptimizeCSSAssetsPlugin()
-]
+const plugins = name => {
+  return [
+    new MiniCssExtractPlugin({
+      filename: name,
+    }),
+    new OptimizeCSSAssetsPlugin()
+  ]
+}
 
-module.exports = {
+module.exports = [{
   mode: dev,
-  entry: {
-    'MdEditor': './src/index.js',
-    'MdCrate': './src/packages/editor.js',
-    'MdMarked': './src/packages/marked.js'
-  },
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js',
-    library:'[name]',
+    filename: 'editor.all.umd.js',
+    library: 'MdEditor',
     libraryTarget: 'umd',
     umdNamedDefine: true,
     libraryExport: 'default',
@@ -91,5 +89,86 @@ module.exports = {
     open: true,
     port: 8899
   },
-  plugins: dev === 'development' ? [ ...devServerPlugin,...plugins ] : [ ...plugins ]
-}
+  plugins: dev === 'development' ? [ ...devServerPlugin,...plugins('editor.css') ] : [ ...plugins('editor.css') ]
+},{
+  mode: dev,
+  entry: './src/lib/editor.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'editor.js',
+    library: 'MdCreate',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    libraryExport: 'default'
+  },
+  module:{
+    rules:[{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader'
+      }
+    }]
+  },
+  plugins: dev === 'development' ? [ ...plugins('editor.css') ] : [ ...plugins('editor.css') ]
+},{
+  mode: dev,
+  entry: './src/lib/marked.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'marked.js',
+    library: 'MdMarked',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    libraryExport: 'default'
+  },
+  module:{
+    rules:[{
+      test: /\.css$/,
+      use:[{
+        loader: dev === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
+        options: {
+          insert:'head',
+          injectType:'styleTag'
+        }
+      },{
+        loader: 'css-loader'
+      }]
+    },{
+      test: /\.scss$/,
+      use: [{
+        loader: dev === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
+        options: {
+          insert:'head',
+          injectType:'styleTag'
+        }
+      },{
+        loader: 'css-loader'
+      },{
+        loader: 'sass-loader'
+      },{
+        loader: 'sass-resources-loader',
+        options: {
+          resources: path.resolve(__dirname, './src/style/vars.scss')
+        }
+      },{
+        loader: 'postcss-loader'
+      }]
+    },{
+      test: /\.(eot|svg|ttf|woff|woff2)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          outputPath: '/icon'
+        }
+      }
+    },{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader'
+      }
+    }]
+  },
+  plugins: dev === 'development' ? [ ...devServerPlugin,...plugins('marked.css') ] : [ ...plugins('marked.css') ]
+}]

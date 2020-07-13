@@ -1,10 +1,8 @@
 import './style/reset.scss'
-import 'highlight.js/styles/github.css'
-import 'github-markdown-css/github-markdown.css'
 import './style/index.scss'
 
-import MdCreate from './packages/editor'
-import MdMarked from './packages/marked'
+import MdCreate from './lib/editor'
+import MdMarked from './lib/marked'
 
 class MdEditor{
   constructor(){
@@ -12,7 +10,6 @@ class MdEditor{
     this.MdMarked = MdMarked
   }
 }
-
 
 
 export default new MdEditor()

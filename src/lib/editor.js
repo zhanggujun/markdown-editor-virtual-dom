@@ -8,8 +8,6 @@ import { ToolLeft,ToolRight } from '../util/tool'
 import VNode from '../util/vnode'
 import Range from '../util/range'
 
-import MdMarked from './marked'
-
 const error = msg => console.error(msg)
 
 const tool = ['undo','redo', 'bold', 'italic', 'underline', 'strikethrough', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'quote','code', 'orderedlist', 'unorderedlist', 'link', 'table', 'line', 'image']
@@ -23,6 +21,7 @@ const defaultOptions = {
   full:false,
   split:true,
   preview:false,
+  shadow: true,
   control: [ ...ToolRight ]
 }
 
@@ -101,7 +100,7 @@ class MdCreate{
   pluginsMarked(){
     const { value = '' } = this.options || {}
     let descriptor = MdCreate.plugins['marked']
-    return isFunction(descriptor) ? descriptor.call(this,this,MdMarked,value) : value
+    return isFunction(descriptor) ? descriptor.call(this,this,value) : value
   }
   insertBefore(text){
     createRange.insertBefore(text)
@@ -145,11 +144,5 @@ class MdCreate{
     return this.options._toolbar.find(item => item.name === name)
   }
 }
-
-const defaultMarked = (editor,markdownIt,value) => {
-  return MdMarked.render(value)
-}
-
-MdCreate.install('marked',defaultMarked)
 
 export default MdCreate

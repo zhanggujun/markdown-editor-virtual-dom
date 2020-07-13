@@ -1,6 +1,6 @@
 class Range{
   constructor(editor){
-    this.Editor = editor
+    this.editor = editor
     this.mark = document.querySelector(`#${editor.mark}`)
   }
   getElement(){
@@ -16,7 +16,7 @@ class Range{
   insertBefore(text,revise = 0,fn){
     const box = this.getElement()
     const range = this.getSelection()
-    const { value = '' } = this.Editor.options || {}
+    const { value = '' } = this.editor.options || {}
     let _value = ''
     const start = value.substring(0,range.start)
     const end = value.substring(range.start)
@@ -26,7 +26,7 @@ class Range{
       const replace = value.substring(range.start,range.end)
       _value = (start + text + end).replace(replace,'')
     }
-    this.Editor.options.value = _value
+    this.editor.options.value = _value
   }
   insertAfter(text){}
 }

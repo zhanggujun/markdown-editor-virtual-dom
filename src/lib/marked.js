@@ -1,3 +1,8 @@
+import 'highlight.js/styles/github.css'
+import 'github-markdown-css/github-markdown.css'
+
+import '../style/marked.scss'
+
 import markdownIt from 'markdown-it'
 import markdowKatex from '@iktakahiro/markdown-it-katex'
 import Hljs from '../util/highlight'

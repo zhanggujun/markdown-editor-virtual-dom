@@ -18,25 +18,19 @@ const patch = init([
 
 class VNode{
   constructor(editor){
-    this.Editor = editor
-  }
-  _createBox(){
-    const { split,full,preview } = this.Editor.options || {}
-    let sel = `div#${this.Editor.mark}.md-box`
-    if(split)
-      sel += ' md-split'
-    if(full)
-      sel += ' md-full'
-    if(preview)
-      sel += ' md-preview'
-    return sel
+    this.editor = editor
   }
   createBox(){
-    const sel = this._createBox()
-    const { height = '500px' } = this.Editor.options
-    return h(sel,{
+    const { height = '500px',split,full,preview,shadow } = this.editor.options
+    return h(`div#${this.editor.mark}.md-box`,{
       style: {
         height: height || '500px'
+      },
+      class: {
+        'md-split': split,
+        'md-full': full,
+        'md-preview': preview,
+        'md-shadow': shadow
       },
       key: 'md-editor'
     },[
@@ -45,7 +39,7 @@ class VNode{
     ])
   }
   createToolLeft(){
-    const { _toolbar = [],keyboard = true } = this.Editor.options || {}
+    const { _toolbar = [],keyboard = true } = this.editor.options || {}
     const toolLeft = _toolbar.map(item => {
       const title = keyboard ? `${item.title} ${item.key}` : `${item.title}`
       return h(`i.md-icon.iconfont.${item.icon}`,{
@@ -55,7 +49,7 @@ class VNode{
         },
         key: item.name,
         on:{
-          click:() => this.Editor.handlerToolbar(item)
+          click:() => this.editor.handlerToolbar(item)
         }
       })
     })
@@ -73,12 +67,12 @@ class VNode{
       },
       key: item.name,
       on:{
-        click:() => this.Editor.handlerControl(item)
+        click:() => this.editor.handlerControl(item)
       }
     })
   }
   createSplit(){
-    const { control = [],split = true } = this.Editor.options || {}
+    const { control = [],split = true } = this.editor.options || {}
     const item = control[0]
     let sel = `i.md-icon.iconfont.${item.icon}`
     if(split)
@@ -86,7 +80,7 @@ class VNode{
     return this.createControl(sel,item)
   }
   createPreview(){
-    const { control = [],preview = false } = this.Editor.options || {}
+    const { control = [],preview = false } = this.editor.options || {}
     const item = control[1]
     let sel = `i.md-icon.iconfont.${item.icon}`
     if(preview)
@@ -94,7 +88,7 @@ class VNode{
     return this.createControl(sel,item)
   }
   createFull(){
-    const { control = [],full = false } = this.Editor.options || {}
+    const { control = [],full = false } = this.editor.options || {}
     const item = control[2]
     let sel = `i.md-icon.iconfont.${item.icon}`
     if(full)
@@ -111,7 +105,11 @@ class VNode{
     ])
   }
   createHead(){
+    const { shadow } = this.editor.options || {}
     return h('div.md-head',{
+      class: {
+        'md-shadow' : shadow
+      },
       key: 'md-head'
     },[
       this.createToolLeft(),
@@ -127,7 +125,7 @@ class VNode{
     ])
   }
   createEdit(){
-    const { value = '',placeholder = '' } = this.Editor.options || {}
+    const { value = '',placeholder = '' } = this.editor.options || {}
     return h('div.md-edit',{
       key: 'md-edit'
     },[
@@ -137,9 +135,9 @@ class VNode{
           value
         },
         on:{
-          input:(event) => this.Editor.onTextChange(event),
-          compositionstart:() => this.Editor.onLockInput(true),
-          compositionend:() => this.Editor.onLockInput(false),
+          input:(event) => this.editor.onTextChange(event),
+          compositionstart:() => this.editor.onLockInput(true),
+          compositionend:() => this.editor.onLockInput(false),
           scroll:() => console.log('scroll')
         },
         key: 'md-textarea'
@@ -147,13 +145,13 @@ class VNode{
     ])
   }
   createText(){
-    const { value = '',empty = '预览区域' } = this.Editor.options || {}
+    const { value = '',empty = '预览区域' } = this.editor.options || {}
     return h('div.md-text.md-scroll',{
       key: 'md-text'
     },[
       value ? h('div.md-main',{
         props:{
-          innerHTML: this.Editor.pluginsMarked()
+          innerHTML: this.editor.pluginsMarked()
         },
         key: 'md-main'
       }) : h('div.md-empty',{ key: 'md-empty' },empty)
@@ -164,7 +162,7 @@ class VNode{
     if(this.VNode){
       patch(this.VNode,VNode)
     }else{
-      patch(this.Editor.el,VNode)
+      patch(this.editor.el,VNode)
     }
     this.VNode = VNode
   }

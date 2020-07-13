@@ -1,8 +1,30 @@
 {
+  "private": false,
+  "name": "@zhanggujun/editor",
+  "description": "基于svelte,marked,xss的简单markdown编辑器",
+  "main": "dist/editor.all.umd.js",
+  "style": "dist/editor.css",
+  "version": "1.0.15",
+  "bugs": {
+    "url": "https://github.com/zhanggujun/markdown-editor-virtual-dom/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhanggujun/markdown-editor-virtual-dom"
+  },
+  "keywords": [
+    "xss",
+    "markdown",
+    "editor",
+    "@zhanggujun/editor"
+  ],
+  "author": "zhanggujun",
+  "license": "MIT",
   "scripts": {
     "clear": "rm -rf dist",
     "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server",
-    "dist": "npm run clear && cross-env NODE_ENV=production webpack"
+    "dist": "npm run clear && cross-env NODE_ENV=production webpack",
+    "publish": "npm publish --access=public --registry=https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
@@ -37,5 +59,9 @@
     "marked": "^1.1.0",
     "shortcut-key": "^1.0.0",
     "xss": "^1.0.7"
-  }
+  },
+  "files": [
+    "dist/*",
+    "README.md"
+  ]
 }

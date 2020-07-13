@@ -26,3 +26,6 @@ $defaultColor: #fff;
   color:#999;
   transition: all .3s;
 }
+@mixin shadow{
+  box-shadow: 2px 2px 5px #d3d6da;
+}

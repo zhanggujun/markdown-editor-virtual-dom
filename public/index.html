@@ -29,10 +29,10 @@
     }
 
     // 自定义渲染
-    // const marked = (editor,marked,value) => {
-    //   return marked.render(value)
-    // }
-    // MdEditor.MdCreate.install('marked',marked)
+    const marked = (editor,value) => {
+      return MdEditor.MdMarked.render(value)
+    }
+    MdEditor.MdCreate.install('marked',marked)
 
     MdEditor.MdCreate.install('plugin1',plugin1)
 
