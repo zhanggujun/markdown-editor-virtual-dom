@@ -1,5 +1,6 @@
-$defaultHeight: 500px;
-$defaultColor: #fff;
+$default-height: 500px;
+$default-color: #fff;
+$default-radius: 3px;
 
 @mixin flex{
   display:flex;
