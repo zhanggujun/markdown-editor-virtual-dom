@@ -1,15 +1,11 @@
 import './style/reset.scss'
 import './style/index.scss'
 
-import MdCreate from './lib/editor'
-import MdMarked from './lib/marked'
+import CoreEditor from './core/editor'
 
-class MdEditor{
-  constructor(){
-    this.MdCreate = MdCreate
-    this.MdMarked = MdMarked
-  }
+const Editor = (el,options = {}) => {
+  const editor = new CoreEditor(el,options)
 }
 
+export default Editor
 
-export default new MdEditor()

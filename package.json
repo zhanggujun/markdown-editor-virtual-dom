@@ -1,10 +1,10 @@
 {
   "private": false,
-  "name": "@zhanggujun/editor",
-  "description": "基于svelte,marked,xss的简单markdown编辑器",
-  "main": "dist/editor.all.umd.js",
-  "style": "dist/editor.css",
-  "version": "1.0.15",
+  "name": "edit.md",
+  "version": "0.0.1",
+  "description": "基于snabbdom、markdown-it、marked、highlight、github-markdown.css的简单markdown编辑器",
+  "main": "core/index.js",
+  "style": "core/index.css",
   "bugs": {
     "url": "https://github.com/zhanggujun/markdown-editor-virtual-dom/issues"
   },
@@ -12,20 +12,17 @@
     "type": "git",
     "url": "https://github.com/zhanggujun/markdown-editor-virtual-dom"
   },
+  "scripts": {
+    "clear": "rm -rf core",
+    "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server",
+    "build": "npm run clear && cross-env NODE_ENV=production webpack",
+    "publish": "npm publish --access=public --registry=https://registry.npmjs.org/"
+  },
   "keywords": [
-    "xss",
-    "markdown",
-    "editor",
-    "@zhanggujun/editor"
+    "snabbdom、markdown-it、marked、highlight、github-markdown.css、markdown"
   ],
   "author": "zhanggujun",
   "license": "MIT",
-  "scripts": {
-    "clear": "rm -rf dist",
-    "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server",
-    "dist": "npm run clear && cross-env NODE_ENV=production webpack",
-    "publish": "npm publish --access=public --registry=https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.4",
@@ -50,18 +47,12 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
-  "dependencies": {
-    "@iktakahiro/markdown-it-katex": "^3.1.0",
-    "github-markdown-css": "^4.0.0",
-    "highlight.js": "^10.1.1",
-    "lodash": "^4.17.15",
-    "markdown-it": "^11.0.0",
-    "marked": "^1.1.0",
-    "shortcut-key": "^1.0.0",
-    "xss": "^1.0.7"
-  },
   "files": [
-    "dist/*",
+    "core/*",
     "README.md"
-  ]
+  ],
+  "dependencies": {
+    "lodash": "^4.17.20",
+    "snabbdom": "^2.1.0"
+  }
 }

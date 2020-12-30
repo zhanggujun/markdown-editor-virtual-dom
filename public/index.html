@@ -2,60 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
   <title>Title</title>
   <style>
-    *{
-      margin:0;padding:0;
-    }
-    .app{
-      width:800px;
-      margin:10px auto;
+    .box{
+      width:80%;
+      height: 400px;
+      margin:20px auto;
+      border: 1px solid #f00;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div id="app"></div>
-    <div style="padding:10px 0;"></div>
-    <div id="app2"></div>
+  <div class="box">
+    <textarea id="container"></textarea>
   </div>
   <script>
-
-    console.log(MdEditor)
-
-    const plugin1 = editor => {
-
-    }
-
-    // 自定义渲染
-    const marked = (editor,value) => {
-      return MdEditor.MdMarked.render(value)
-    }
-    MdEditor.MdCreate.install('marked',marked)
-
-    MdEditor.MdCreate.install('plugin1',plugin1)
-
-    const editor = new MdEditor.MdCreate('#app',{
-      value: '# Math Rulez!\n$\\sqrt{3x-1}+(1+x)^2$'
-    })
-
-
-    editor.getTool('undo').handler = () => alert(1)
-
-    const item = {
-      icon: 'icon-xianshiqi',
-      title: '预览',
-      name: 'preview',
-      key: 'shift+alt+v',
-      handler:() => alert(2)
-    }
-    editor.addTool(item)
-
-    // new MdEditor('#app2',{
-    //   placeholder: '发大哥'
-    // })
-
+    const editor = new MdEditor('#container')
   </script>
 </body>
 </html>
