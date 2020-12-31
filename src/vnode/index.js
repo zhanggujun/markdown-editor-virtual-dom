@@ -6,6 +6,7 @@ import { eventListenersModule } from 'snabbdom/build/package/modules/eventlisten
 import { h } from 'snabbdom/build/package/h'
 
 import { isDeep,flatten } from '../util/index'
+import { left } from '../util/toolbar'
 
 const patch = init([ classModule,propsModule,styleModule,eventListenersModule ])
 
@@ -14,16 +15,12 @@ const a = [1,2,3,4,5,6,7,5,5,6,4,4]
 class VNode{
   constructor(editor){
     this.editor = editor
-    console.log('this.editor',this.editor)
   }
   head(){
     return h('div.md-head','head',[
       this.toolbar(),
       this.control()
     ])
-  }
-  body(){
-    return h('div.md-body','body')
   }
   control(){
     const control = [1,2,3].map((item,index) => h('i.md-icon.iconfont.icon-center_align_text',{ key: index }))
@@ -33,13 +30,44 @@ class VNode{
     return h('div.md-toolbar',[ ...this.toolicon() ])
   }
   toolicon(){
-    const deep = isDeep(a)
-    const array = deep ? flatten(a) : a
-    const icon = array.map((item,index) => item ? h('i.md-icon.iconfont.icon-center_align_text',{ key: index }) : h('i.md-icon-line',{ key: index }))
+    const tool = left()
+    const deep = isDeep(tool)
+    const array = deep ? flatten(tool) : tool
+    const renderIcon = (item,index) => h(`i.md-icon.iconfont.${item.icon}`,{
+      key: index,
+      on:{
+        click:event => this.editor.tool(item)
+      }
+    })
+    const icon = array.map((item,index) => item ? renderIcon(item) : h('i.md-icon-line',{ key: index }))
     return icon
   }
+  body(){
+    return h('div.md-body',[
+      this.text(),
+      this.view()
+    ])
+  }
+  text(){
+    const { value,placeholder } = this.editor.options || {}
+    return h('div.md-text',[
+      h('textarea.md-textarea',{
+        props:{
+          placeholder,
+          value,
+          spellcheck: false
+        }
+      })
+    ])
+  }
+  view(){
+    return h('div.md-view','view')
+  }
   create(){
-    return h('div.md-box',[
+    return h(`div#${this.editor.box}.md-box`,{
+      key: 'md-box',
+      style:{ height: '600px' }
+    },[
       this.head(),
       this.body()
     ])
