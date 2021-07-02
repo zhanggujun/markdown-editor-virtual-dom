@@ -1,32 +1,5 @@
-$default-height: 500px;
-$default-color: #fff;
-$default-radius: 3px;
-
 @mixin flex{
   display:flex;
-}
-
-@mixin center-y{
-  @include flex;
-  align-items:center;
-}
-
-@mixin center-x{
-  @include flex;
-  justify-content:center;
-}
-
-@mixin center{
-  @include center-x;
-  @include center-y;
-}
-
-@mixin headHover{
-  background-color:#ebebeb;
-  box-shadow:inset 0 0 3px rgba(0,0,0,.1);
-  color:#999;
-  transition: all .3s;
-}
-@mixin shadow{
-  box-shadow: 2px 2px 5px #d3d6da;
+  align-items: center;
+  justify-content: center;
 }
